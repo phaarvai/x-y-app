@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Sparkles, CalendarDays, TrendingUp, Globe, Factory, Lightbulb, ArrowRight, Star, CheckCircle2, ChevronRight } from "lucide-react";
+import { Sparkles, CalendarDays, TrendingUp, Globe, Factory, Lightbulb, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 
@@ -139,31 +139,6 @@ export default function HomePage() {
                 </button>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-20 bg-blue-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h2 className="text-4xl font-bold mb-10">Trusted by Industry Leaders</h2>
-          <div className="grid grid-cols-3 gap-8 mb-12">
-            {[{ val: "1,200+", label: "Manufacturers Listed" }, { val: "$45M+", label: "Deals Closed" }, { val: "98%", label: "Satisfaction Rate" }].map(s => (
-              <div key={s.label}>
-                <div className="text-4xl sm:text-5xl font-extrabold mb-2">{s.val}</div>
-                <div className="text-blue-200 text-sm">{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-blue-500/50 rounded-2xl p-8 max-w-xl mx-auto border border-blue-400/30">
-            <div className="flex justify-center gap-1 mb-4">
-              {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
-            </div>
-            <p className="text-blue-100 italic text-base leading-relaxed mb-4">
-              "X!Y transformed how we find manufacturing partners. We went from prototype to production in half the time."
-            </p>
-            <p className="font-bold text-white text-sm">Sarah Chen</p>
-            <p className="text-blue-300 text-xs">Founder, TechFlow Industries</p>
           </div>
         </div>
       </section>
