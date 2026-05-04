@@ -1,8 +1,12 @@
-# AssistAI — Workspace
+# X!Y – The Explorer Factory / AssistAI Workspace
 
 ## Overview
 
-AssistAI is a full-stack AI assistant web app built as a pnpm monorepo. It features voice search, multilingual support (12+ languages including RTL), AI-mocked responses, user authentication, and an accessible deep-ocean-blue design.
+This pnpm monorepo contains two products:
+
+1. **X!Y – The Explorer Factory** (`artifacts/nextjs-app/`) — A B2B manufacturing marketplace built with Next.js 15 (App Router) + TypeScript + Tailwind CSS v3. Fully serverless-ready for Vercel. Connects manufacturers, innovators, and investors.
+
+2. **AssistAI** (`artifacts/main-app/` + `artifacts/api-server/`) — A full-stack AI assistant web app with voice search, multilingual support, and user authentication.
 
 ## Stack
 
@@ -10,8 +14,22 @@ AssistAI is a full-stack AI assistant web app built as a pnpm monorepo. It featu
 - **Node.js version**: 24
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
-- **Frontend**: React + Vite (artifacts/main-app) — port from `PORT` env
-- **API server**: Express 5 (artifacts/api-server) — port 8080
+
+### X!Y Next.js App (`artifacts/nextjs-app/`)
+- **Framework**: Next.js 15.5 (App Router)
+- **Language**: TypeScript (strict)
+- **Styling**: Tailwind CSS v3 (PostCSS approach)
+- **DB**: Drizzle ORM + `postgres` package (serverless-safe: max:1, idle_timeout:20)
+- **Auth**: localStorage token `xiy_token`, React Context + React Query for `/api/auth/me`
+- **Password hashing**: `sha256(password + SESSION_SECRET)`
+- **Port**: 19344 (dev)
+- **Preview path**: `/nextjs-app/`
+- **Base path**: `NEXT_BASE_PATH=/nextjs-app` (Replit), empty for Vercel
+- **Routing**: All client fetch calls use `apiUrl()` helper from `lib/api-url.ts`
+
+### AssistAI (`artifacts/main-app/` + `artifacts/api-server/`)
+- **Frontend**: React + Vite — port from `PORT` env
+- **API server**: Express 5 — port 8080
 - **Database**: PostgreSQL + Drizzle ORM
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec at lib/api-spec)
@@ -22,41 +40,53 @@ AssistAI is a full-stack AI assistant web app built as a pnpm monorepo. It featu
 ## Application Structure
 
 ```
-artifacts/main-app/     # React+Vite frontend (previewPath: /)
-artifacts/api-server/   # Express API server (previewPath: /api)
-lib/api-spec/           # OpenAPI spec + codegen config
-lib/api-client-react/   # Generated React Query hooks
-lib/api-zod/            # Generated Zod schemas
-lib/db/                 # Drizzle ORM schema + DB client
+artifacts/nextjs-app/       # X!Y Next.js 15 app (previewPath: /nextjs-app/)
+  app/                      # Next.js App Router pages + API routes
+  components/               # React components (Navbar, XiyLogo, ui/*)
+  hooks/                    # use-auth.tsx, use-toast.ts
+  lib/                      # db.ts, schema.ts, utils.ts, manufacturers.ts, api-url.ts
+  next.config.ts            # basePath config
+  tailwind.config.ts        # Tailwind v3 config
+  postcss.config.mjs        # PostCSS config
+artifacts/main-app/         # AssistAI React+Vite frontend (previewPath: /)
+artifacts/api-server/       # AssistAI Express API server (previewPath: /api)
+lib/api-spec/               # OpenAPI spec + codegen config
+lib/api-client-react/       # Generated React Query hooks
+lib/api-zod/                # Generated Zod schemas
+lib/db/                     # Drizzle ORM schema + DB client
 ```
 
-## Frontend Pages
+## X!Y Pages
 
-| Path | Component | Auth required |
-|------|-----------|---------------|
-| `/` | HomePage | No |
-| `/search` | SearchPage | No |
-| `/login` | LoginPage | No |
-| `/register` | RegisterPage | No |
-| `/history` | HistoryPage | Yes |
-| `/chat/:id` | ChatPage | Yes |
-| `/profile` | ProfilePage | Yes |
+| Path | Description |
+|------|-------------|
+| `/` | Home — hero, how it works, stakeholder sections |
+| `/browse` | Browse manufacturers with filters |
+| `/manufacturer/[id]` | Manufacturer detail + machine listing |
+| `/booking/[manufacturerId]/[machineId]` | Booking form |
+| `/booking-confirmation` | Booking confirmation |
+| `/ai-assistant` | AI manufacturing assistant chat |
+| `/login` | Login page |
+| `/register` | Register page |
+| `/for-business` | Landing for manufacturers to list their factory |
+| `/provider-setup` | Manufacturer onboarding form |
 
-## Features
+## X!Y API Routes
 
-- **Auth**: JWT-style token stored in `localStorage.assistai_token`; `AuthProvider` + `useAuth` hook; auto-attached to all API requests via custom fetch
-- **Search**: Text + voice (Web Speech API); language selector (12+ languages); AI-mocked response + web results; trending suggestions
-- **Multilingual**: RTL support via `useLanguage` hook; `document.dir` toggled automatically
-- **Dark mode**: Toggle in navbar; preference persisted to localStorage
-- **History**: Full conversation list with stats (total conversations, messages, languages, voice queries)
-- **Profile**: User info, usage stats, top queries
+| Path | Method | Description |
+|------|--------|-------------|
+| `/api/auth/register` | POST | Register user |
+| `/api/auth/login` | POST | Login user |
+| `/api/auth/logout` | POST | Logout user |
+| `/api/auth/me` | GET | Get current user |
+| `/api/healthz` | GET | Health check |
 
-## Demo Accounts
+## X!Y Database Schema
 
-- `demo@assistai.com` / `demo123`
-- `guest@assistai.com` / `demo123`
+- `users` — id, name, email, password_hash, preferred_language, created_at, updated_at
+- `sessions` — id, user_id, token, created_at, expires_at
 
-## Database Schema
+## AssistAI Database Schema
 
 - `users` — id, name, email, password_hash, preferred_language, created_at
 - `sessions` — id, user_id, token, expires_at, created_at
@@ -66,19 +96,21 @@ lib/db/                 # Drizzle ORM schema + DB client
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
+- `pnpm --filter @workspace/nextjs-app run dev` — run X!Y Next.js app
+- `pnpm --filter @workspace/nextjs-app run build` — production build
+- `pnpm --filter @workspace/nextjs-app run typecheck` — typecheck X!Y app
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks/Zod schemas
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
 
-## Auth Token Notes
+## Vercel Deployment Notes (X!Y)
 
-- Token key in localStorage: `assistai_token`
-- `lib/api-client-react/src/custom-fetch.ts` auto-reads it and attaches as `Authorization: Bearer <token>`
-- No `setAuthTokenGetter` call needed in web context
+For Vercel deployment, set these env vars:
+- `DATABASE_URL` — PostgreSQL connection string
+- `SESSION_SECRET` — secret for password hashing
+- `NEXT_BASE_PATH` — leave empty (no basePath on Vercel)
+- `NEXT_PUBLIC_BASE_PATH` — leave empty
 
-## Codegen Notes
-
-- `lib/api-zod/src/index.ts` must only export `export * from "./generated/api";` — orval barrel auto-patched by codegen script
-- Hook import pattern: `useGetConversation(id, { query: { enabled: !!id, queryKey: getGetConversationQueryKey(id) } })`
-- Mutation pattern: `mutation.mutate({ data: { ... } }, { onSuccess: (res) => ... })`
+For Replit:
+- `NEXT_BASE_PATH=/nextjs-app`
+- `NEXT_PUBLIC_BASE_PATH=/nextjs-app`
+- `PORT=19344`
