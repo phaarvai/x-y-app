@@ -228,7 +228,7 @@ export default function BrowsePage() {
                         View Profile
                       </Button>
                     </Link>
-                    <Link href={`/manufacturer/${m.id}`}>
+                    <Link href={`/booking/${m.id}/${m.machinery?.[0]?.id ?? 1}`}>
                       <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5 font-medium" data-testid={`button-book-${m.id}`}>
                         <CalendarDays className="w-4 h-4" /> View Availability &amp; Book
                       </Button>

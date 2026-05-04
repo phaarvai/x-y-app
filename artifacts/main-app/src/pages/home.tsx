@@ -67,7 +67,6 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <div className="h-2 bg-gradient-to-r from-blue-500 via-violet-500 to-blue-600 mt-14" />
       </section>
 
       {/* AI Section */}
