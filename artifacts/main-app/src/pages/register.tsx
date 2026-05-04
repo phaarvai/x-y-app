@@ -1,174 +1,125 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Link, useLocation } from "wouter";
-import { UserPlus, Mail, Lock, User, Globe, Eye, EyeOff, Bot } from "lucide-react";
 import { useState } from "react";
+import { useLocation } from "wouter";
+import { User, Factory } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { useRegister, useListLanguages, getListLanguagesQueryKey } from "@workspace/api-client-react";
+import { useRegister } from "@workspace/api-client-react";
 import { useAuthContext } from "@/hooks/use-auth";
+import XiyLogo from "@/components/XiyLogo";
 
-const schema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  preferredLanguage: z.string().default("en"),
-});
-type FormData = z.infer<typeof schema>;
+type AccountType = "buyer" | "manufacturer" | null;
 
 export default function RegisterPage() {
   const [, setLocation] = useLocation();
   const { login } = useAuthContext();
   const { toast } = useToast();
   const registerMutation = useRegister();
-  const [showPw, setShowPw] = useState(false);
+  const [accountType, setAccountType] = useState<AccountType>(null);
+  const [step, setStep] = useState<1 | 2>(1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { data: languagesData } = useListLanguages({
-    query: { queryKey: getListLanguagesQueryKey() }
-  });
-  const languages = languagesData?.languages || [];
+  const handleTypeSelect = (type: AccountType) => {
+    setAccountType(type);
+    setStep(2);
+  };
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", password: "", preferredLanguage: "en" },
-  });
-
-  const onSubmit = (data: FormData) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !password) {
+      toast({ title: "Fill in all fields", variant: "destructive" });
+      return;
+    }
     registerMutation.mutate(
-      { data },
+      { data: { name, email, password, preferredLanguage: "en" } },
       {
         onSuccess: (res: any) => {
           login(res.token);
-          toast({ title: "Account created!", description: `Welcome to AssistAI, ${res.user.name}!` });
-          setLocation("/search");
+          toast({ title: "Account created!", description: `Welcome to X!Y, ${res.user.name}!` });
+          setLocation(accountType === "manufacturer" ? "/for-business" : "/browse");
         },
         onError: (err: any) => {
-          const msg = err?.data?.error || "Registration failed. Please try again.";
-          toast({ title: "Registration failed", description: msg, variant: "destructive" });
+          toast({ title: "Registration failed", description: err?.data?.error || "Please try again.", variant: "destructive" });
         },
       }
     );
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-      <div className="w-full max-w-md">
-        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
-          <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-md">
-              <Bot className="w-8 h-8 text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-[#EEF2FF] to-[#F0F9FF] flex flex-col items-center justify-center p-4">
+      <div className="mb-6 flex flex-col items-center">
+        <XiyLogo size="lg" />
+      </div>
+      <h1 className="text-3xl font-bold text-gray-900 mb-1 text-center">Create Your Account</h1>
+      <p className="text-gray-500 text-sm mb-8 text-center">Join the manufacturing revolution</p>
+
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        {step === 1 ? (
+          <>
+            <h2 className="font-bold text-gray-900 mb-5">Choose Account Type</h2>
+            <div className="space-y-3">
+              <button
+                onClick={() => handleTypeSelect("buyer")}
+                className="w-full flex items-start gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50/30 transition-all text-left group"
+                data-testid="button-type-buyer"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">I need manufacturing services</p>
+                  <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">Find manufacturers, book machines, and bring your ideas to life</p>
+                </div>
+              </button>
+              <button
+                onClick={() => handleTypeSelect("manufacturer")}
+                className="w-full flex items-start gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-400 hover:bg-emerald-50/30 transition-all text-left group"
+                data-testid="button-type-manufacturer"
+              >
+                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-200 transition-colors">
+                  <Factory className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">I provide manufacturing services</p>
+                  <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">List your machines, set availability, and connect with customers</p>
+                </div>
+              </button>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Create account</h1>
-            <p className="text-muted-foreground mt-1">Join AssistAI for free today</p>
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label="Create account form">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" aria-hidden />
-                      Full Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your full name" autoComplete="name" {...field} data-testid="input-name" aria-label="Full name" className="h-11" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-primary" aria-hidden />
-                      Email address
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="you@example.com" autoComplete="email" {...field} data-testid="input-email" aria-label="Email address" className="h-11" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Lock className="w-4 h-4 text-primary" aria-hidden />
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input type={showPw ? "text" : "password"} placeholder="Min 6 characters" autoComplete="new-password" {...field} data-testid="input-password" aria-label="Password" className="h-11 pr-11" />
-                        <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPw ? "Hide password" : "Show password"}>
-                          {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="preferredLanguage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-primary" aria-hidden />
-                      Preferred Language
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger data-testid="select-language" aria-label="Select preferred language" className="h-11">
-                          <SelectValue placeholder="Select a language" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {languages.length > 0 ? (
-                          languages.map(lang => (
-                            <SelectItem key={lang.code} value={lang.code}>
-                              {lang.flag} {lang.name} ({lang.nativeName})
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="en">English</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="w-full h-11 gap-2 mt-2" disabled={registerMutation.isPending} data-testid="button-submit-register" aria-label="Create your account">
-                <UserPlus className="w-4 h-4" />
+          </>
+        ) : (
+          <>
+            <button onClick={() => setStep(1)} className="text-xs text-gray-400 hover:text-gray-600 mb-4 flex items-center gap-1">← Back</button>
+            <h2 className="font-bold text-gray-900 mb-5">
+              {accountType === "manufacturer" ? "List Your Factory" : "Create Your Account"}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4" aria-label="Create account form">
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-1.5 block">Full Name</Label>
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" className="h-11 border-gray-200 rounded-lg" data-testid="input-name" />
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-1.5 block">Email Address</Label>
+                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="h-11 border-gray-200 rounded-lg" data-testid="input-email" />
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-1.5 block">Password</Label>
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min 6 characters" className="h-11 border-gray-200 rounded-lg" data-testid="input-password" />
+              </div>
+              <Button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg" disabled={registerMutation.isPending} data-testid="button-submit-register">
                 {registerMutation.isPending ? "Creating account..." : "Create Account"}
               </Button>
             </form>
-          </Form>
+          </>
+        )}
 
-          <div className="mt-6 pt-5 border-t border-border text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="text-primary font-medium hover:underline" data-testid="link-to-login">
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </div>
+        <p className="text-center text-sm text-gray-500 mt-5">
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-600 font-semibold hover:underline">Sign In</Link>
+        </p>
       </div>
     </div>
   );

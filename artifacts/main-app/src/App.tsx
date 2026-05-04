@@ -4,13 +4,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home";
-import SearchPage from "@/pages/search";
+import BrowsePage from "@/pages/browse";
+import ManufacturerPage from "@/pages/manufacturer";
+import BookingPage from "@/pages/booking";
+import AIAssistantPage from "@/pages/ai-assistant";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
-import HistoryPage from "@/pages/history";
-import ChatPage from "@/pages/chat";
-import ProfilePage from "@/pages/profile";
-import Navbar from "@/components/Navbar";
+import ForBusinessPage from "@/pages/for-business";
 import { AuthProvider } from "@/hooks/use-auth";
 
 const queryClient = new QueryClient({
@@ -21,19 +21,17 @@ const queryClient = new QueryClient({
 
 function Router() {
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <Switch>
-        <Route path="/" component={HomePage} />
-        <Route path="/search" component={SearchPage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
-        <Route path="/history" component={HistoryPage} />
-        <Route path="/chat/:id" component={ChatPage} />
-        <Route path="/profile" component={ProfilePage} />
-        <Route component={NotFound} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/" component={HomePage} />
+      <Route path="/browse" component={BrowsePage} />
+      <Route path="/manufacturer/:id" component={ManufacturerPage} />
+      <Route path="/booking/:manufacturerId/:machineId" component={BookingPage} />
+      <Route path="/ai-assistant" component={AIAssistantPage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/for-business" component={ForBusinessPage} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
