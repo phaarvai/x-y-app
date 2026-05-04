@@ -11,6 +11,8 @@ import AIAssistantPage from "@/pages/ai-assistant";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ForBusinessPage from "@/pages/for-business";
+import BookingConfirmationPage from "@/pages/booking-confirmation";
+import ProviderSetupPage from "@/pages/provider-setup";
 import { AuthProvider } from "@/hooks/use-auth";
 
 const queryClient = new QueryClient({
@@ -30,6 +32,8 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/for-business" component={ForBusinessPage} />
+      <Route path="/booking-confirmation" component={BookingConfirmationPage} />
+      <Route path="/provider-setup" component={ProviderSetupPage} />
       <Route component={NotFound} />
     </Switch>
   );

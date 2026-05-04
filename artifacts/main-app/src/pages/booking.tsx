@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { CalendarDays, Clock, MapPin, Star, Sparkles, CheckCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { manufacturers, TIME_SLOTS } from "@/data/manufacturers";
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function BookingPage() {
   const params = useParams<{ manufacturerId: string; machineId: string }>();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const manufacturer = manufacturers.find(m => m.id === parseInt(params.manufacturerId || "1"));
   const machine = manufacturer?.machinery.find(m => m.id === parseInt(params.machineId || "1")) ?? manufacturer?.machinery[0];
   const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
@@ -38,8 +39,16 @@ export default function BookingPage() {
       toast({ title: "Select a time slot", description: "Please select at least one time slot to book.", variant: "destructive" });
       return;
     }
-    toast({ title: "Booking confirmed!", description: `You've booked ${totalHours} hours for $${totalCost}. Check your email for confirmation.` });
-    setSelectedSlots([]);
+    const slotSummary = selectedSlotData.map(s => `${s.start} – ${s.end} (${s.hours} hrs)`).join(", ");
+    const query = new URLSearchParams({
+      machine: machine?.name || "",
+      manufacturer: manufacturer?.name || "",
+      location: manufacturer?.location || "",
+      slots: slotSummary,
+      total: `$${totalCost}`,
+      date: "May 4, 2026",
+    }).toString();
+    setLocation(`/booking-confirmation?${query}`);
   };
 
   return (

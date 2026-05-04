@@ -40,7 +40,7 @@ export default function RegisterPage() {
         onSuccess: (res: any) => {
           login(res.token);
           toast({ title: "Account created!", description: `Welcome to X!Y, ${res.user.name}!` });
-          setLocation(accountType === "manufacturer" ? "/for-business" : "/browse");
+          setLocation(accountType === "manufacturer" ? "/provider-setup" : "/ai-assistant");
         },
         onError: (err: any) => {
           toast({ title: "Registration failed", description: err?.data?.error || "Please try again.", variant: "destructive" });
