@@ -2,5 +2,9 @@
   "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm run build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_BASE_PATH": "/x-y",
+    "NEXT_PUBLIC_BASE_PATH": "/x-y"
+  }
 }

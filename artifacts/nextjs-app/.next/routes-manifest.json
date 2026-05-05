@@ -1,1 +1,113 @@
-{"version":3,"caseSensitive":false,"basePath":"/nextjs-app","rewrites":{"beforeFiles":[],"afterFiles":[],"fallback":[]},"redirects":[{"source":"/nextjs-app/","destination":"/nextjs-app","permanent":true,"basePath":false,"internal":true,"regex":"^\\/nextjs-app\\/$"},{"source":"/:path+/","destination":"/:path+","permanent":true,"internal":true,"regex":"^(?:\\/((?:[^\\/]+?)(?:\\/(?:[^\\/]+?))*))\\/$"}],"headers":[]}
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/booking/[manufacturerId]/[machineId]",
+      "regex": "^/booking/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPmanufacturerId": "nxtPmanufacturerId",
+        "nxtPmachineId": "nxtPmachineId"
+      },
+      "namedRegex": "^/booking/(?<nxtPmanufacturerId>[^/]+?)/(?<nxtPmachineId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/manufacturer/[id]",
+      "regex": "^/manufacturer/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/manufacturer/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/ai-assistant",
+      "regex": "^/ai\\-assistant(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ai\\-assistant(?:/)?$"
+    },
+    {
+      "page": "/booking-confirmation",
+      "regex": "^/booking\\-confirmation(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/booking\\-confirmation(?:/)?$"
+    },
+    {
+      "page": "/browse",
+      "regex": "^/browse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/browse(?:/)?$"
+    },
+    {
+      "page": "/for-business",
+      "regex": "^/for\\-business(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/for\\-business(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/provider-setup",
+      "regex": "^/provider\\-setup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/provider\\-setup(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
