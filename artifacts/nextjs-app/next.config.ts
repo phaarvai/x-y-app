@@ -1,14 +1,8 @@
 import type { NextConfig } from "next";
 
-const basePath = process.env.NEXT_BASE_PATH || "";
-
 const nextConfig: NextConfig = {
-  basePath,
-  assetPrefix: basePath,
-  serverExternalPackages: ["postgres"],
-  experimental: {
-    optimizePackageImports: ["lucide-react"],
-  },
+  basePath: "/x-y",
+  assetPrefix: "/x-y",
 };
 
 export default nextConfig;
